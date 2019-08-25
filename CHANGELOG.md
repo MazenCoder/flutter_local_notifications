@@ -1,4 +1,7 @@
 # [0.8.3]
+* Fixed Monthly and Yearly Repeat
+
+# [0.8.3]
 * Added Monthly and Yearly Repeat
 
 # [0.8.2]

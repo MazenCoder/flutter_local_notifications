@@ -1,4 +1,4 @@
-library flutter_local_notifications;
+library flutter_local_notifications_extended;
 
 export 'src/platform_specifics/android/styles/style_information.dart';
 export 'src/platform_specifics/android/styles/default_style_information.dart';

@@ -16,7 +16,7 @@ typedef DidReceiveLocalNotificationCallback = Future<dynamic> Function(
     int id, String title, String body, String payload);
 
 /// The available intervals for periodically showing notifications
-enum RepeatInterval { EveryMinute, Hourly, Daily, Weekly }
+enum RepeatInterval { EveryMinute, Hourly, Daily, Weekly, Monthly, Yearly }
 
 /// The days of the week
 class Day {
@@ -197,7 +197,7 @@ class FlutterLocalNotificationsPlugin {
     });
   }
 
-  /// Shows a notification on a daily interval at the specified time
+  /// Shows a notification on a weekly interval at the specified time
   Future<void> showWeeklyAtDayAndTime(int id, String title, String body,
       Day day, Time notificationTime, NotificationDetails notificationDetails,
       {String payload}) async {
@@ -210,6 +210,46 @@ class FlutterLocalNotificationsPlugin {
       'body': body,
       'calledAt': DateTime.now().millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.Weekly.index,
+      'repeatTime': notificationTime.toMap(),
+      'day': day.value,
+      'platformSpecifics': serializedPlatformSpecifics,
+      'payload': payload ?? ''
+    });
+  }
+
+  /// Shows a notification on a monthly interval at the specified time
+  Future<void> showMonthlyAtDayAndTime(int id, String title, String body,
+      Day day, Time notificationTime, NotificationDetails notificationDetails,
+      {String payload}) async {
+    _validateId(id);
+    var serializedPlatformSpecifics =
+    _retrievePlatformSpecificNotificationDetails(notificationDetails);
+    await _channel.invokeMethod('showMonthlyAtDayAndTime', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'repeatInterval': RepeatInterval.Monthly.index,
+      'repeatTime': notificationTime.toMap(),
+      'day': day.value,
+      'platformSpecifics': serializedPlatformSpecifics,
+      'payload': payload ?? ''
+    });
+  }
+
+  /// Shows a notification on a yearly interval at the specified time
+  Future<void> showYearlyAtDayAndTime(int id, String title, String body,
+      Day day, Time notificationTime, NotificationDetails notificationDetails,
+      {String payload}) async {
+    _validateId(id);
+    var serializedPlatformSpecifics =
+    _retrievePlatformSpecificNotificationDetails(notificationDetails);
+    await _channel.invokeMethod('showYearlyAtDayAndTime', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'repeatInterval': RepeatInterval.Yearly.index,
       'repeatTime': notificationTime.toMap(),
       'day': day.value,
       'platformSpecifics': serializedPlatformSpecifics,

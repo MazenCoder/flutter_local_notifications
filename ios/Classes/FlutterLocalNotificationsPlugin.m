@@ -24,6 +24,8 @@ NSString *const SCHEDULE_METHOD = @"schedule";
 NSString *const PERIODICALLY_SHOW_METHOD = @"periodicallyShow";
 NSString *const SHOW_DAILY_AT_TIME_METHOD = @"showDailyAtTime";
 NSString *const SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = @"showWeeklyAtDayAndTime";
+NSString *const SHOW_MONTHLY_AT_DAY_AND_TIME_METHOD = @"showMonthlyAtDayAndTime";
+NSString *const SHOW_YEARLY_AT_DAY_AND_TIME_METHOD = @"showYearlyAtDayAndTime";
 NSString *const CANCEL_METHOD = @"cancel";
 NSString *const CANCEL_ALL_METHOD = @"cancelAll";
 NSString *const PENDING_NOTIFICATIONS_REQUESTS_METHOD = @"pendingNotificationRequests";
@@ -67,7 +69,9 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     EveryMinute,
     Hourly,
     Daily,
-    Weekly
+    Weekly,
+    Monthly,
+    Yearly
 };
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -217,7 +221,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     }
     if([SCHEDULE_METHOD isEqualToString:call.method]) {
         notificationDetails.secondsSinceEpoch = @([call.arguments[MILLISECONDS_SINCE_EPOCH] longLongValue] / 1000);
-    } else if([PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method] || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
+    } else if([PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method] || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [SHOW_MONTHLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [SHOW_YEARLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
         if (call.arguments[REPEAT_TIME]) {
             NSDictionary *timeArguments = (NSDictionary *) call.arguments[REPEAT_TIME];
             notificationDetails.repeatTime = [[NotificationTime alloc] init];
@@ -280,7 +284,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if([INITIALIZE_METHOD isEqualToString:call.method]) {
         [self initialize:call result:result];
     } else if ([SHOW_METHOD isEqualToString:call.method] || [SCHEDULE_METHOD isEqualToString:call.method] || [PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method]
-               || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
+               || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [SHOW_MONTHLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [SHOW_YEARLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
         [self showNotification:call result:result];
     } else if([CANCEL_METHOD isEqualToString:call.method]) {
         [self cancelNotification:call result:result];
@@ -339,6 +343,12 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                     break;
                 case Weekly:
                     timeInterval = 60 * 60 * 24 * 7;
+                    break;
+                case Monthly:
+                    timeInterval = 60 * 60 * 24 * 7 * 4;
+                    break;
+                case Yearly:
+                    timeInterval = 60 * 60 * 24 * 7 * 52;
                     break;
             }
             repeats = YES;
@@ -414,6 +424,14 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                     notification.repeatInterval = NSCalendarUnitDay;
                     break;
                 case Weekly:
+                    timeInterval = 60 * 60 * 24 * 7;
+                    notification.repeatInterval = NSCalendarUnitWeekOfYear;
+                    break;
+                case Monthly:
+                    timeInterval = 60 * 60 * 24 * 7;
+                    notification.repeatInterval = NSCalendarUnitWeekOfYear;
+                    break;
+                case Yearly:
                     timeInterval = 60 * 60 * 24 * 7;
                     notification.repeatInterval = NSCalendarUnitWeekOfYear;
                     break;

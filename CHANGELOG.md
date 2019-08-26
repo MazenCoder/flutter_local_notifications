@@ -1,3 +1,6 @@
+# [0.8.5]
+* Fixed Long Values in repeat
+
 # [0.8.4]
 * Fixed Monthly and Yearly Repeat
 

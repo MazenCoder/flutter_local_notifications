@@ -1,6 +1,6 @@
 name: flutter_local_notifications_extended
 description: A cross platform plugin for displaying and scheduling local notifications for Flutter applications with the ability to customise for each platform.
-version: 0.8.4
+version: 0.8.5
 author: Michael Bui <michael@dexterx.dev>, Saleh Yassin <yass0016@gmail.com>
 homepage: https://github.com/yass0016/flutter_local_notifications
 

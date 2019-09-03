@@ -1,3 +1,9 @@
+# [0.8.7]
+* Fixed iOS run issue
+
+# [0.8.6]
+* Fixed iOS build issue
+
 # [0.8.5]
 * Fixed Long Values in repeat
 

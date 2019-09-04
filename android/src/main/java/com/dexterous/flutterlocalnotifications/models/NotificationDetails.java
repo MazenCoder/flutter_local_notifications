@@ -33,6 +33,7 @@ public class NotificationDetails {
     private static final String SOUND = "sound";
     private static final String ENABLE_VIBRATION = "enableVibration";
     private static final String VIBRATION_PATTERN = "vibrationPattern";
+    private static final String ENABLE_STICKY = "enableSticky";
     private static final String GROUP_KEY = "groupKey";
     private static final String SET_AS_GROUP_SUMMARY = "setAsGroupSummary";
     private static final String GROUP_ALERT_BEHAVIOR = "groupAlertBehavior";
@@ -112,6 +113,7 @@ public class NotificationDetails {
     public Boolean playSound;
     public String sound;
     public Boolean enableVibration;
+    public Bollean enableSticky;
     public long[] vibrationPattern;
     public NotificationStyle style;
     public StyleInformation styleInformation;
@@ -182,6 +184,7 @@ public class NotificationDetails {
             notificationDetails.sound = (String) platformChannelSpecifics.get(SOUND);
             notificationDetails.enableVibration = (Boolean) platformChannelSpecifics.get(ENABLE_VIBRATION);
             notificationDetails.vibrationPattern = (long[]) platformChannelSpecifics.get(VIBRATION_PATTERN);
+            notificationDetails.enableSticky = (Boolean) platformChannelSpecifics.get(ENABLE_STICKY);
             notificationDetails.groupKey = (String) platformChannelSpecifics.get(GROUP_KEY);
             notificationDetails.setAsGroupSummary = (Boolean) platformChannelSpecifics.get(SET_AS_GROUP_SUMMARY);
             notificationDetails.groupAlertBehavior = (Integer) platformChannelSpecifics.get(GROUP_ALERT_BEHAVIOR);

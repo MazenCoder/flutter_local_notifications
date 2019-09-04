@@ -41,6 +41,9 @@ class AndroidNotificationDetails {
   /// Indicates if lights should be enabled when the notification is displayed. For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
   bool enableLights;
 
+  /// Sticky Notification
+  bool enableSticky;
+
   /// The vibration pattern. Requires setting [enableVibration] to true for it to work. For Android 8.0+, this is tied to the specified channel cannot be changed afterward the channel has been created for the first time.
   Int64List vibrationPattern;
 

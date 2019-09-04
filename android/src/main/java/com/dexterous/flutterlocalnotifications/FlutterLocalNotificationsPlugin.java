@@ -141,6 +141,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
         applyGrouping(notificationDetails, builder);
         setSound(context, notificationDetails, builder);
         setVibrationPattern(notificationDetails, builder);
+        setSticky(notificationDetails, builder);
         setLights(notificationDetails, builder);
         setStyle(context, notificationDetails, builder);
         setProgress(notificationDetails, builder);
@@ -380,6 +381,12 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             }
         } else {
             builder.setVibrate(new long[]{0});
+        }
+    }
+
+    private static void setSticky(NotificationDetails notificationDetails, NotificationCompat.Builder builder) {
+        if (BooleanUtils.getValue(notificationDetails.enableSticky)) {
+            builder.setOngoing(notificationDetails.enableSticky);
         }
     }
 

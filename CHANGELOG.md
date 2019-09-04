@@ -1,3 +1,6 @@
+# [0.8.8]
+* Added Sticky Notification to Android
+
 # [0.8.7]
 * Fixed iOS run issue
 

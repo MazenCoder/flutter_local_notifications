@@ -1,3 +1,6 @@
+# [0.8.8+1]
+* Fixed a typo
+
 # [0.8.8]
 * Added Sticky Notification to Android
 

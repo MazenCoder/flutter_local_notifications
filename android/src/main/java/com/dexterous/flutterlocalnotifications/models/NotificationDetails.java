@@ -113,7 +113,7 @@ public class NotificationDetails {
     public Boolean playSound;
     public String sound;
     public Boolean enableVibration;
-    public Bollean enableSticky;
+    public Boolean enableSticky;
     public long[] vibrationPattern;
     public NotificationStyle style;
     public StyleInformation styleInformation;

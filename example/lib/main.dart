@@ -562,7 +562,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _showDailyAtTime() async {
-    var time = Time(10, 0, 0);
+    var time = Time(18, 16, 0);
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'repeatDailyAtTime channel id',
         'repeatDailyAtTime channel name',
@@ -570,10 +570,12 @@ class _HomePageState extends State<HomePage> {
     var iOSPlatformChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.showDailyAtTime(
+    await flutterLocalNotificationsPlugin.showDailyAtDayAndTime(
         0,
         'show daily title',
         'Daily notification shown at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
+        Day.Saturday,
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 18, 16, 0, 0, 0),
         time,
         platformChannelSpecifics);
   }
@@ -592,6 +594,7 @@ class _HomePageState extends State<HomePage> {
         'show weekly title',
         'Weekly notification shown on Monday at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
         Day.Monday,
+        DateTime.now(),
         time,
         platformChannelSpecifics);
   }

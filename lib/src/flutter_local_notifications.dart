@@ -180,7 +180,7 @@ class FlutterLocalNotificationsPlugin {
 
   /// Shows a notification on a daily interval at the specified time
   Future<void> showDailyAtTime(int id, String title, String body,
-      Time notificationTime, NotificationDetails notificationDetails,
+      DateTime date, Time notificationTime, NotificationDetails notificationDetails,
       {String payload}) async {
     _validateId(id);
     var serializedPlatformSpecifics =
@@ -190,6 +190,7 @@ class FlutterLocalNotificationsPlugin {
       'title': title,
       'body': body,
       'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'scheduleDate': date.millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.Daily.index,
       'repeatTime': notificationTime.toMap(),
       'platformSpecifics': serializedPlatformSpecifics,
@@ -197,9 +198,30 @@ class FlutterLocalNotificationsPlugin {
     });
   }
 
+  /// Shows a notification on a daily interval at the specified time
+  Future<void> showDailyAtDayAndTime(int id, String title, String body,
+      Day day, DateTime date, Time notificationTime, NotificationDetails notificationDetails,
+      {String payload}) async {
+    _validateId(id);
+    var serializedPlatformSpecifics =
+    _retrievePlatformSpecificNotificationDetails(notificationDetails);
+    await _channel.invokeMethod('showDailyAtDayAndTime', <String, dynamic>{
+      'id': id,
+      'title': title,
+      'body': body,
+      'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'scheduleDate': date.millisecondsSinceEpoch,
+      'repeatInterval': RepeatInterval.Daily.index,
+      'repeatTime': notificationTime.toMap(),
+      'day': day.value,
+      'platformSpecifics': serializedPlatformSpecifics,
+      'payload': payload ?? ''
+    });
+  }
+
   /// Shows a notification on a weekly interval at the specified time
   Future<void> showWeeklyAtDayAndTime(int id, String title, String body,
-      Day day, Time notificationTime, NotificationDetails notificationDetails,
+      Day day, DateTime date, Time notificationTime, NotificationDetails notificationDetails,
       {String payload}) async {
     _validateId(id);
     var serializedPlatformSpecifics =
@@ -209,6 +231,7 @@ class FlutterLocalNotificationsPlugin {
       'title': title,
       'body': body,
       'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'scheduleDate': date.millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.Weekly.index,
       'repeatTime': notificationTime.toMap(),
       'day': day.value,
@@ -219,7 +242,7 @@ class FlutterLocalNotificationsPlugin {
 
   /// Shows a notification on a monthly interval at the specified time
   Future<void> showMonthlyAtDayAndTime(int id, String title, String body,
-      Day day, Time notificationTime, NotificationDetails notificationDetails,
+      Day day, DateTime date, Time notificationTime, NotificationDetails notificationDetails,
       {String payload}) async {
     _validateId(id);
     var serializedPlatformSpecifics =
@@ -229,6 +252,7 @@ class FlutterLocalNotificationsPlugin {
       'title': title,
       'body': body,
       'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'scheduleDate': date.millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.Monthly.index,
       'repeatTime': notificationTime.toMap(),
       'day': day.value,
@@ -239,7 +263,7 @@ class FlutterLocalNotificationsPlugin {
 
   /// Shows a notification on a yearly interval at the specified time
   Future<void> showYearlyAtDayAndTime(int id, String title, String body,
-      Day day, Time notificationTime, NotificationDetails notificationDetails,
+      Day day,DateTime date, Time notificationTime, NotificationDetails notificationDetails,
       {String payload}) async {
     _validateId(id);
     var serializedPlatformSpecifics =
@@ -249,6 +273,7 @@ class FlutterLocalNotificationsPlugin {
       'title': title,
       'body': body,
       'calledAt': DateTime.now().millisecondsSinceEpoch,
+      'scheduleDate': date.millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.Yearly.index,
       'repeatTime': notificationTime.toMap(),
       'day': day.value,

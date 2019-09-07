@@ -73,6 +73,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
     private static final String SCHEDULE_METHOD = "schedule";
     private static final String PERIODICALLY_SHOW_METHOD = "periodicallyShow";
     private static final String SHOW_DAILY_AT_TIME_METHOD = "showDailyAtTime";
+    private static final String SHOW_DAILY_AT_DAY_AND_TIME_METHOD = "showDailyAtDayAndTime";
     private static final String SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = "showWeeklyAtDayAndTime";
     private static final String SHOW_MONTHLY_AT_DAY_AND_TIME_METHOD = "showMonthlyAtDayAndTime";
     private static final String SHOW_YEARLY_AT_DAY_AND_TIME_METHOD = "showYearlyAtDayAndTime";
@@ -284,7 +285,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 break;
         }
 
-        long startTimeMilliseconds = notificationDetails.calledAt;
+        long startTimeMilliseconds = notificationDetails.scheduleDate;
         if (notificationDetails.repeatTime != null) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
@@ -295,11 +296,13 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
                 calendar.set(Calendar.DAY_OF_WEEK, notificationDetails.day);
             }
 
-            startTimeMilliseconds = calendar.getTimeInMillis();
+            //startTimeMilliseconds = calendar.getTimeInMillis();
+            startTimeMilliseconds = notificationDetails.scheduleDate;
         }
 
         // ensure that start time is in the future
         long currentTime = System.currentTimeMillis();
+
         while (startTimeMilliseconds < currentTime) {
             startTimeMilliseconds += repeatInterval;
         }
@@ -641,6 +644,7 @@ public class FlutterLocalNotificationsPlugin implements MethodCallHandler, Plugi
             }
             case PERIODICALLY_SHOW_METHOD:
             case SHOW_DAILY_AT_TIME_METHOD:
+            case SHOW_DAILY_AT_DAY_AND_TIME_METHOD:
             case SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD:
             case SHOW_MONTHLY_AT_DAY_AND_TIME_METHOD:
             case SHOW_YEARLY_AT_DAY_AND_TIME_METHOD: {

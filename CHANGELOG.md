@@ -1,3 +1,10 @@
+# [0.9.0]
+* Fixed iOS month and year repeat
+* Added Date for Repeating Schedule
+
+# [0.8.9]
+* Added Schedule Repeat by Day with Date and Time
+
 # [0.8.8+1]
 * Fixed a typo
 

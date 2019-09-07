@@ -55,6 +55,7 @@ public class NotificationDetails {
     private static final String HTML_FORMAT_TITLE = "htmlFormatTitle";
     private static final String HTML_FORMAT_CONTENT = "htmlFormatContent";
     private static final String DAY = "day";
+    private static final String SCHEDULE_DATE = "scheduleDate";
     private static final String COLOR_ALPHA = "colorAlpha";
     private static final String COLOR_RED = "colorRed";
     private static final String COLOR_GREEN = "colorGreen";
@@ -128,6 +129,7 @@ public class NotificationDetails {
     public Boolean autoCancel;
     public Boolean ongoing;
     public Integer day;
+    public Long scheduleDate;
     public Integer color;
     public String largeIcon;
     public BitmapSource largeIconBitmapSource;
@@ -159,6 +161,9 @@ public class NotificationDetails {
         }
         if (arguments.containsKey(CALLED_AT)) {
             notificationDetails.calledAt = (Long) arguments.get(CALLED_AT);
+        }
+        if (arguments.containsKey(SCHEDULE_DATE)) {
+            notificationDetails.scheduleDate = (Long) arguments.get(SCHEDULE_DATE);
         }
         if (arguments.containsKey(REPEAT_INTERVAL)) {
             notificationDetails.repeatInterval = RepeatInterval.values()[(Integer) arguments.get(REPEAT_INTERVAL)];

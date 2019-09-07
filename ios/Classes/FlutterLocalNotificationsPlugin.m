@@ -23,6 +23,7 @@ NSString *const SHOW_METHOD = @"show";
 NSString *const SCHEDULE_METHOD = @"schedule";
 NSString *const PERIODICALLY_SHOW_METHOD = @"periodicallyShow";
 NSString *const SHOW_DAILY_AT_TIME_METHOD = @"showDailyAtTime";
+NSString *const SHOW_DAILY_AT_DAY_AND_TIME_METHOD = @"showDailyAtDayAndTime";
 NSString *const SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD = @"showWeeklyAtDayAndTime";
 NSString *const SHOW_MONTHLY_AT_DAY_AND_TIME_METHOD = @"showMonthlyAtDayAndTime";
 NSString *const SHOW_YEARLY_AT_DAY_AND_TIME_METHOD = @"showYearlyAtDayAndTime";
@@ -62,6 +63,8 @@ NSString *const SECOND = @"second";
 
 NSString *const NOTIFICATION_ID = @"NotificationId";
 NSString *const PAYLOAD = @"payload";
+NSString *const SCHEDULE_DATE = @"scheduleDate";
+
 NSString *const NOTIFICATION_LAUNCHED_APP = @"notificationLaunchedApp";
 
 
@@ -202,6 +205,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     notificationDetails.title = call.arguments[TITLE];
     notificationDetails.body = call.arguments[BODY];
     notificationDetails.payload = call.arguments[PAYLOAD];
+    notificationDetails.scheduleDate = call.arguments[SCHEDULE_DATE];
     notificationDetails.presentAlert = displayAlert;
     notificationDetails.presentSound = playSound;
     notificationDetails.presentBadge = updateBadge;
@@ -221,7 +225,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     }
     if([SCHEDULE_METHOD isEqualToString:call.method]) {
         notificationDetails.secondsSinceEpoch = @([call.arguments[MILLISECONDS_SINCE_EPOCH] longLongValue] / 1000);
-    } else if([PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method] || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [SHOW_MONTHLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [SHOW_YEARLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
+    } else if([PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [SHOW_MONTHLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [SHOW_YEARLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
         if (call.arguments[REPEAT_TIME]) {
             NSDictionary *timeArguments = (NSDictionary *) call.arguments[REPEAT_TIME];
             notificationDetails.repeatTime = [[NotificationTime alloc] init];
@@ -241,7 +245,8 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         notificationDetails.repeatInterval = @([call.arguments[REPEAT_INTERVAL] integerValue]);
     }
     if(@available(iOS 10.0, *)) {
-        [self showUserNotification:notificationDetails];
+        //[self showUserNotification:notificationDetails];
+        [self showLocalNotification:notificationDetails];
     } else {
         [self showLocalNotification:notificationDetails];
     }
@@ -284,7 +289,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if([INITIALIZE_METHOD isEqualToString:call.method]) {
         [self initialize:call result:result];
     } else if ([SHOW_METHOD isEqualToString:call.method] || [SCHEDULE_METHOD isEqualToString:call.method] || [PERIODICALLY_SHOW_METHOD isEqualToString:call.method] || [SHOW_DAILY_AT_TIME_METHOD isEqualToString:call.method]
-               || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [SHOW_MONTHLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [SHOW_YEARLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
+               || [SHOW_DAILY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [SHOW_WEEKLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [SHOW_MONTHLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method] || [SHOW_YEARLY_AT_DAY_AND_TIME_METHOD isEqualToString:call.method]) {
         [self showNotification:call result:result];
     } else if([CANCEL_METHOD isEqualToString:call.method]) {
         [self cancelNotification:call result:result];
@@ -329,6 +334,7 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     content.userInfo = [self buildUserDict:notificationDetails.id title:notificationDetails.title presentAlert:notificationDetails.presentAlert presentSound:notificationDetails.presentSound presentBadge:notificationDetails.presentBadge payload:notificationDetails.payload];
     if(notificationDetails.secondsSinceEpoch == nil) {
         NSTimeInterval timeInterval = 0.1;
+
         Boolean repeats = NO;
         if(notificationDetails.repeatInterval != nil) {
             switch([notificationDetails.repeatInterval integerValue]) {
@@ -428,11 +434,11 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                     notification.repeatInterval = NSCalendarUnitWeekOfYear;
                     break;
                 case Monthly:
-                    timeInterval = 60 * 60 * 24 * 7;
+                    timeInterval = 60 * 60 * 24 * 7 * 4;
                     notification.repeatInterval = NSCalendarUnitWeekOfYear;
                     break;
                 case Yearly:
-                    timeInterval = 60 * 60 * 24 * 7;
+                    timeInterval = 60 * 60 * 24 * 7 * 52;
                     notification.repeatInterval = NSCalendarUnitWeekOfYear;
                     break;
             }
@@ -446,16 +452,16 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
                 if(notificationDetails.day != nil) {
                     [dateComponents setWeekday:[notificationDetails.day integerValue]];
                 }
-                notification.fireDate = [calendar dateFromComponents:dateComponents];
+                notification.fireDate = [NSDate dateWithTimeIntervalSince1970:[notificationDetails.scheduleDate longLongValue] / 1000];
             } else {
-                notification.fireDate = [NSDate dateWithTimeIntervalSinceNow:timeInterval];
+                notification.fireDate = [NSDate dateWithTimeIntervalSince1970:[notificationDetails.scheduleDate longLongValue] / 1000];
             }
             [[UIApplication sharedApplication] scheduleLocalNotification:notification];
             return;
         }
         [[UIApplication sharedApplication] presentLocalNotificationNow:notification];
     } else {
-        notification.fireDate = [NSDate dateWithTimeIntervalSince1970:[notificationDetails.secondsSinceEpoch longLongValue]];
+        notification.fireDate = [NSDate dateWithTimeIntervalSince1970:[notificationDetails.scheduleDate longLongValue] / 1000];
         [[UIApplication sharedApplication] scheduleLocalNotification:notification];
     }
 }

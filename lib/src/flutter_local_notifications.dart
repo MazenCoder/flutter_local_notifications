@@ -213,7 +213,7 @@ class FlutterLocalNotificationsPlugin {
       'scheduleDate': date.millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.Daily.index,
       'repeatTime': notificationTime.toMap(),
-      'day': day.value,
+      //'day': day.value,
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? ''
     });
@@ -234,7 +234,7 @@ class FlutterLocalNotificationsPlugin {
       'scheduleDate': date.millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.Weekly.index,
       'repeatTime': notificationTime.toMap(),
-      'day': day.value,
+      //'day': day.value,
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? ''
     });
@@ -255,7 +255,7 @@ class FlutterLocalNotificationsPlugin {
       'scheduleDate': date.millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.Monthly.index,
       'repeatTime': notificationTime.toMap(),
-      'day': day.value,
+      //'day': day.value,
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? ''
     });
@@ -276,7 +276,7 @@ class FlutterLocalNotificationsPlugin {
       'scheduleDate': date.millisecondsSinceEpoch,
       'repeatInterval': RepeatInterval.Yearly.index,
       'repeatTime': notificationTime.toMap(),
-      'day': day.value,
+      //'day': day.value,
       'platformSpecifics': serializedPlatformSpecifics,
       'payload': payload ?? ''
     });

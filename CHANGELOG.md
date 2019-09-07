@@ -1,3 +1,6 @@
+# [0.9.0+1]
+* Fixed Day when null issue
+
 # [0.9.0]
 * Fixed iOS month and year repeat
 * Added Date for Repeating Schedule

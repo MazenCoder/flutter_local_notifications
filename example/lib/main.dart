@@ -90,6 +90,13 @@ class _HomePageState extends State<HomePage> {
                   ),
                   PaddedRaisedButton(
                     buttonText:
+                        'Show plain notification that has no body with payload',
+                    onPressed: () async {
+                      await _showNotificationWithNoBody();
+                    },
+                  ),
+                  PaddedRaisedButton(
+                    buttonText:
                         'Show plain notification with payload and update channel description [Android]',
                     onPressed: () async {
                       await _showNotificationWithUpdatedChannelDescription();
@@ -102,11 +109,14 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                   PaddedRaisedButton(
-                      buttonText:
-                          'Schedule notification to appear in 5 seconds, custom sound, red colour, large icon, red LED',
-                      onPressed: () async {
-                        await _scheduleNotification();
-                      }),
+                    buttonText:
+                        'Schedule notification to appear in 5 seconds, custom sound, red colour, large icon, red LED',
+                    onPressed: () async {
+                      await _scheduleNotification();
+                    },
+                  ),
+                  Text(
+                      'NOTE: red colour, large icon and red LED are Android-specific'),
                   PaddedRaisedButton(
                     buttonText: 'Repeat notification every minute',
                     onPressed: () async {
@@ -227,6 +237,18 @@ class _HomePageState extends State<HomePage> {
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
         0, 'plain title', 'plain body', platformChannelSpecifics,
+        payload: 'item x');
+  }
+
+  Future<void> _showNotificationWithNoBody() async {
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'your channel id', 'your channel name', 'your channel description',
+        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'plain title', null, platformChannelSpecifics,
         payload: 'item x');
   }
 
@@ -575,7 +597,8 @@ class _HomePageState extends State<HomePage> {
         'show daily title',
         'Daily notification shown at approximately ${_toTwoDigitString(time.hour)}:${_toTwoDigitString(time.minute)}:${_toTwoDigitString(time.second)}',
         Day.Saturday,
-        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 18, 16, 0, 0, 0),
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day,
+            18, 16, 0, 0, 0),
         time,
         platformChannelSpecifics);
   }
@@ -693,8 +716,8 @@ class _HomePageState extends State<HomePage> {
     await showDialog(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text(title),
-        content: Text(body),
+        title: title != null ? Text(title) : null,
+        content: body != null ? Text(body) : null,
         actions: [
           CupertinoDialogAction(
             isDefaultAction: true,
@@ -734,7 +757,7 @@ class SecondScreenState extends State<SecondScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Second Screen with payload: " + _payload),
+        title: Text('Second Screen with payload: ${(_payload ?? '')}'),
       ),
       body: Center(
         child: RaisedButton(

@@ -107,14 +107,28 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
     if(@available(iOS 10.0, *)) {
         UNUserNotificationCenter *center =  [UNUserNotificationCenter currentNotificationCenter];
         [center getPendingNotificationRequestsWithCompletionHandler:^(NSArray<UNNotificationRequest *> * _Nonnull requests) {
-            NSMutableArray<NSDictionary<NSString *, NSObject *> *> *pendingNotificationRequests = [[NSMutableArray alloc] initWithCapacity:[requests count]];
+            // NSMutableArray<NSDictionary<NSString *, NSObject *> *> *pendingNotificationRequests = [[NSMutableArray alloc] initWithCapacity:[requests count]];
+            NSMutableArray<NSMutableDictionary<NSString *, NSObject *> *> *pendingNotificationRequests = [[NSMutableArray alloc] initWithCapacity:[requests count]];
+            
             for (UNNotificationRequest *request in requests) {
-                [pendingNotificationRequests addObject:@{
-                                   @"id" : request.content.userInfo[NOTIFICATION_ID],
-                                   @"title" : request.content.title,
-                                   @"body" : request.content.body,
-                                   @"payload": request.content.userInfo[PAYLOAD]
-                                   }];
+                // [pendingNotificationRequests addObject:@{
+                //                    @"id" : request.content.userInfo[NOTIFICATION_ID],
+                //                    @"title" : request.content.title,
+                //                    @"body" : request.content.body,
+                //                    @"payload": request.content.userInfo[PAYLOAD]
+                //                    }];
+                NSMutableDictionary *pendingNotificationRequest = [[NSMutableDictionary alloc] init];
+                pendingNotificationRequest[ID] = request.content.userInfo[NOTIFICATION_ID];
+                if (request.content.title != nil) {
+                    pendingNotificationRequest[TITLE] = request.content.title;
+                }
+                if (request.content.body != nil) {
+                    pendingNotificationRequest[BODY] = request.content.body;
+                }
+                if (request.content.userInfo[PAYLOAD] != [NSNull null]) {
+                    pendingNotificationRequest[PAYLOAD] = request.content.userInfo[PAYLOAD];
+                }
+                [pendingNotificationRequests addObject:pendingNotificationRequest];
             }
             result(pendingNotificationRequests);
         }];
@@ -123,12 +137,24 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
         NSMutableArray<NSDictionary<NSString *, NSObject *> *> *pendingNotificationRequests = [[NSMutableArray alloc] initWithCapacity:[notifications count]];
         for( int i = 0; i < [notifications count]; i++) {
             UILocalNotification* localNotification = [notifications objectAtIndex:i];
-            [pendingNotificationRequests addObject:@{
-                                                     @"id" : localNotification.userInfo[NOTIFICATION_ID],
-                                                     @"title" : localNotification.userInfo[TITLE],
-                                                     @"body" : localNotification.alertBody,
-                                                     @"payload": localNotification.userInfo[PAYLOAD]
-                                                     }];
+            // [pendingNotificationRequests addObject:@{
+            //                                          @"id" : localNotification.userInfo[NOTIFICATION_ID],
+            //                                          @"title" : localNotification.userInfo[TITLE],
+            //                                          @"body" : localNotification.alertBody,
+            //                                          @"payload": localNotification.userInfo[PAYLOAD]
+            //                                          }];
+            NSMutableDictionary *pendingNotificationRequest = [[NSMutableDictionary alloc] init];
+            pendingNotificationRequest[ID] = localNotification.userInfo[NOTIFICATION_ID];
+            if (localNotification.userInfo[TITLE] != [NSNull null]) {
+                pendingNotificationRequest[TITLE] = localNotification.userInfo[TITLE];
+            }
+            if (localNotification.alertBody) {
+                pendingNotificationRequest[BODY] = localNotification.alertBody;
+            }
+            if (localNotification.userInfo[PAYLOAD] != [NSNull null]) {
+                pendingNotificationRequest[PAYLOAD] = localNotification.userInfo[PAYLOAD];
+            }
+            [pendingNotificationRequests addObject:pendingNotificationRequest];
         }
         result(pendingNotificationRequests);
     }
@@ -202,8 +228,14 @@ typedef NS_ENUM(NSInteger, RepeatInterval) {
 - (void)showNotification:(FlutterMethodCall * _Nonnull)call result:(FlutterResult _Nonnull)result {
     NotificationDetails *notificationDetails = [[NotificationDetails alloc]init];
     notificationDetails.id = call.arguments[ID];
-    notificationDetails.title = call.arguments[TITLE];
-    notificationDetails.body = call.arguments[BODY];
+    // notificationDetails.title = call.arguments[TITLE];
+    // notificationDetails.body = call.arguments[BODY];
+    if(call.arguments[TITLE] != [NSNull null]) {
+        notificationDetails.title = call.arguments[TITLE];
+    }
+    if(call.arguments[BODY] != [NSNull null]) {
+        notificationDetails.body = call.arguments[BODY];
+    }
     notificationDetails.payload = call.arguments[PAYLOAD];
     notificationDetails.scheduleDate = call.arguments[SCHEDULE_DATE];
     notificationDetails.presentAlert = displayAlert;
@@ -524,7 +556,18 @@ didReceiveLocalNotification:(UILocalNotification*)notification {
         return;
     }
 
-    NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:notification.userInfo[NOTIFICATION_ID], ID,notification.userInfo[TITLE], TITLE,notification.alertBody, BODY,  notification.userInfo[PAYLOAD], PAYLOAD, nil];
+    // NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:notification.userInfo[NOTIFICATION_ID], ID,notification.userInfo[TITLE], TITLE,notification.alertBody, BODY,  notification.userInfo[PAYLOAD], PAYLOAD, nil];
+    NSMutableDictionary *arguments = [[NSMutableDictionary alloc] init];
+    arguments[ID]= notification.userInfo[NOTIFICATION_ID];
+    if (notification.userInfo[TITLE] != [NSNull null]) {
+        arguments[TITLE] =notification.userInfo[TITLE];
+    }
+    if (notification.alertBody != nil) {
+        arguments[BODY] = notification.alertBody;
+    }
+    if (notification.userInfo[PAYLOAD] != [NSNull null]) {
+        arguments[PAYLOAD] =notification.userInfo[PAYLOAD];
+    }
     [_channel invokeMethod:DID_RECEIVE_LOCAL_NOTIFICATION arguments:arguments];
 }
 

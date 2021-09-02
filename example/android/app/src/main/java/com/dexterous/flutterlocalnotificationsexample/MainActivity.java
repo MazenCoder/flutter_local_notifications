@@ -24,7 +24,8 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        GeneratedPluginRegistrant.registerWith(this);
+//        GeneratedPluginRegistrant.getApplication();
+         GeneratedPluginRegistrant.registerWith(this);
         new MethodChannel(getFlutterView(), "crossingthestreams.io/resourceResolver").setMethodCallHandler(
                 new MethodChannel.MethodCallHandler() {
                     @Override

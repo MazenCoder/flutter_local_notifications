@@ -310,7 +310,7 @@ class _HomePageState extends State<HomePage> {
   Future<String> _downloadAndSaveImage(String url, String fileName) async {
     var directory = await getApplicationDocumentsDirectory();
     var filePath = '${directory.path}/$fileName';
-    var response = await http.get(url);
+    var response = await http.get(Uri.parse(url));
     var file = File(filePath);
     await file.writeAsBytes(response.bodyBytes);
     return filePath;
